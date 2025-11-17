@@ -8,6 +8,7 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
     private var counter = 0
 
     @IBOutlet weak var counterLabel: UILabel!
@@ -19,14 +20,16 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        counterLabel.text = "Значение счетчика 0"
+        updateCounterLabel()
         counterButtonUp.tintColor = .red
         counterButtonDown.tintColor = .blue
+        
         dataTextView.text = "История изменений:"
+        dataTextView.isEditable = false
     }
     
-    private func changeCounterNumber(newNumber: Int) {
-        counterLabel.text = "Значение счетчика \(newNumber)"
+    private func updateCounterLabel() {
+        counterLabel.text = "Значение счетчика \(counter)"
     }
     
     private func getCurrentDataTimeString() -> String {
@@ -40,30 +43,31 @@ class ViewController: UIViewController {
     
     private func addNewDataLine(message: String){
         let timestamp = getCurrentDataTimeString()
+        
         dataTextView.text += "\n" + "\(timestamp) \(message)"
+        
         let bottom = NSRange(location: dataTextView.text.count - 1, length: 1)
         dataTextView.scrollRangeToVisible(bottom)
     }
 
     @IBAction func counterButtonUpDidTap(_ sender: Any) {
         counter += 1
-        changeCounterNumber(newNumber: counter)
+        updateCounterLabel()
         addNewDataLine(message: "значение изменено на +1")
     }
     
     @IBAction func counterButtonDownDidTap(_ sender: Any) {
-        if counter == 0 {
-            counter = 0
-            addNewDataLine(message: "попытка уменьшить значение счётчика ниже 0")
-        } else {
+        if counter > 0 {
             counter -= 1
             addNewDataLine(message: "значение изменено на -1")
+        } else {
+            addNewDataLine(message: "попытка уменьшить значение счётчика ниже 0")
         }
-        changeCounterNumber(newNumber: counter)
+        updateCounterLabel()
     }
     @IBAction func crearButtonDidTap(_ sender: Any) {
         counter = 0
-        changeCounterNumber(newNumber: counter)
+        updateCounterLabel()
         addNewDataLine(message: "значение сброшено")
     }
 }
